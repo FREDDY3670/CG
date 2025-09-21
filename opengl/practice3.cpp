@@ -93,6 +93,9 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			rectangles.push_back(newRect);
 		}
 		break;
+	case 'q':
+		glutLeaveMainLoop();
+		break;
 	}
 	glutPostRedisplay();
 }
