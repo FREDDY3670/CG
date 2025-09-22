@@ -8,17 +8,19 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid MouseClick(int button, int state, int x, int y);
 GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid update(int value);
 
 struct Rectangle1 {
 
 	float x, y;
 	float width, height;
 	float r, g, b;
-
+	float dx, dy;
 };
 
 std::vector<Rectangle1> rectangles;
 const int MAX_RECTANGLES = 5;
+bool animation = false;
 
 float randomFloat1(float min, float max) {
 	if (min > max) std::swap(min, max);
@@ -51,9 +53,31 @@ void main(int argc, char** argv)
 	glutReshapeFunc(Reshape);
 	glutMouseFunc(MouseClick);
 	glutKeyboardFunc(Keyboard);
+	glutTimerFunc(16, update, 0);
 	glutMainLoop();
 }
 
+GLvoid update(int value) {
+	if (animation) {
+		for (auto& rect : rectangles) { // &를 사용해 실제 사각형 데이터를 수정
+			// 위치 업데이트
+			rect.x += rect.dx;
+			rect.y += rect.dy;
+			float halfWidth = rect.width / 2.0f;
+			float halfHeight = rect.height / 2.0f;
+
+			if (rect.x + halfWidth > 1.0f || rect.x - halfWidth < -1.0f) {
+				rect.dx *= -1.0f; // X축 방향 반전
+			}
+			// 상하 벽 충돌
+			if (rect.y + halfHeight > 1.0f || rect.y - halfHeight < -1.0f) {
+				rect.dy *= -1.0f; // Y축 방향 반전
+			}
+		}
+	}
+	glutPostRedisplay(); // 화면을 다시 그려달라고 요청
+	glutTimerFunc(16, update, 0);
+}
 
 GLvoid drawScene(GLvoid) {
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -98,6 +122,8 @@ GLvoid MouseClick(int button, int state, int x, int y) {
 			newRect.g = randomFloat();
 			newRect.b = randomFloat();
 
+			newRect.dx = randomFloat1(-0.02f, 0.02f);
+			newRect.dy = randomFloat1(-0.02f, 0.02f);
 			// 4. 완성된 새 사각형을 벡터에 추가
 			rectangles.push_back(newRect);
 
@@ -110,6 +136,9 @@ GLvoid MouseClick(int button, int state, int x, int y) {
 
 GLvoid Keyboard(unsigned char key, int x, int y) {
 	switch (key) {
+	case '1':
+		animation = !animation;
+		break;
 	case 'q': case 27:
 		glutLeaveMainLoop();
 		break;
