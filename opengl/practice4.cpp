@@ -8,11 +8,9 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid MouseClick(int button, int state, int x, int y);
 GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid update(int value);
 
 struct Rectangle1 {
 
-	// 현재 상태값
 	float x, y;
 	float width, height;
 	float r, g, b;
@@ -21,7 +19,6 @@ struct Rectangle1 {
 
 std::vector<Rectangle1> rectangles;
 const int MAX_RECTANGLES = 5;
-//int width = 800, height = 800;
 
 float randomFloat1(float min, float max) {
 	if (min > max) std::swap(min, max);
@@ -54,14 +51,9 @@ void main(int argc, char** argv)
 	glutReshapeFunc(Reshape);
 	glutMouseFunc(MouseClick);
 	glutKeyboardFunc(Keyboard);
-
-	glutTimerFunc(16, update, 0);
-	//glutMotionFunc(MouseDrag);
 	glutMainLoop();
 }
 
-GLvoid update(int value) {
-}
 
 GLvoid drawScene(GLvoid) {
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
